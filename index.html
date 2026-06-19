@@ -80,10 +80,21 @@
             </form>
         </dialog>
     </div>
+    <div id="settings-page" class="page hidden">
+        <p>
+            <label for="game-mode">Mode de jeu :</span>
+            <select name="game-mode" id="game-mode-selector">
+                <option value="default">Sans mes monsieurs</option>
+                <option value="both">Avec mes monsieurs</option>
+                <option value="custom">Juste mes monsieurs</option>
+            </select>
+        </p>
+    </div>
     <div id="menu">
         <button id="clique-nav" class="icon-button active" onclick="navigate('clique')"><img src="assets/cursor_24p.png"></button>
         <button id="dessine-nav" class="icon-button" onclick="navigate('dessine')"><img src="assets/pencil.png" ></button>
         <button id="gallery-nav" class="icon-button" onclick="navigate('gallery')"><img src="assets/folder.png"></button>
+        <button id="settings-nav" class="icon-button" onclick="navigate('settings')"><img src="assets/gear.png"></button>
     </div>
     <a id="acknowledgements" href="https://github.com/FeelDee/cliquemonsieur">créé par Félix Brun et Philippe Ducas</a>
 </body>

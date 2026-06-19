@@ -117,7 +117,7 @@ saveDialog.addEventListener('close', () => {
     const data = Object.fromEntries(formdata);
     storageSaveMonsieur({
         name: data.name,
-        occurrences: data.occurrences,
+        occurrences: Number(data.occurrences),
         timestamp: Date.now(),
         blob: previousCaptures[previousCaptures.length - 1]
     });

@@ -1,14 +1,46 @@
 let totalOccurrences = 0;
+let monsieursList = [];
 
-function onLoad() {
-    console.log("(╯°□°)╯︵ ┻━┻");
+async function cliqueInit(gameMode) {
+    totalOccurrences = 0;
+    monsieursList = [];
 
-    monsieursList.forEach(({file, occurrences}, index) => {
-        monsieursList[index].min = totalOccurrences;
-        monsieursList[index].max = totalOccurrences + occurrences;
-        totalOccurrences += occurrences;
-    });
+    if (gameMode === 'default' || gameMode === 'both') {
+        defaultMonsieursList.forEach(({file, occurrences}) => {
+            monsieursList.push({
+                file,
+                occurrences,
+                min: totalOccurrences,
+                max: totalOccurrences + occurrences
+            })
+            totalOccurrences += occurrences;
+        });
+    }
+
+    if (gameMode === 'custom' || gameMode === 'both') {
+        const monsieurs = await storageGetAllMonsieurs();
+        monsieurs.forEach(({name, occurrences, blob}) => {
+            occurrences = Number(occurrences);
+            monsieursList.push({
+                name,
+                file: URL.createObjectURL(blob),
+                occurrences,
+                min: totalOccurrences,
+                max: totalOccurrences + occurrences
+            })
+            totalOccurrences += occurrences;
+        });
+    }
+} 
+
+const gameModeSelector = document.getElementById('game-mode-selector');
+const gameModeSetting = new StorageObject('gameMode', 'default');
+
+gameModeSelector.value = gameModeSetting.value;
+gameModeSelector.oninput = () => {
+    gameModeSetting.value = gameModeSelector.value;
 }
+gameModeSetting.subscribe(cliqueInit);
 
 function cliqueTitle() {
     document.getElementById('clique-page').removeEventListener('click', cliqueTitle);
@@ -82,4 +114,4 @@ function navigate(page) {
     currentPage = page;
 }
 
-document.addEventListener("DOMContentLoaded", onLoad);
+cliqueInit(gameModeSetting.value);

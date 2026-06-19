@@ -1,4 +1,4 @@
-let monsieursList = [
+const defaultMonsieursList = [
     {
         file: 'monsieurs/baboune.png',
         occurrences: 10,
