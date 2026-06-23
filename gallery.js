@@ -11,8 +11,8 @@ class GalleryCard extends HTMLElement {
         this.name = this.getAttribute('name');
         name.innerHTML = this.name;
 
-        const occurrences = this.querySelector('#gallery-card-occurrences');
-        occurrences.innerHTML = this.getAttribute('occurrences');
+        const timestamp = this.querySelector('#gallery-card-timestamp');
+        timestamp.innerHTML = new Date(Number(this.getAttribute('timestamp'))).toLocaleDateString();
 
         const editButton = this.querySelector('#gallery-card-edit');
         editButton.onclick = async () => {
@@ -48,11 +48,11 @@ customElements.define("gallery-card", GalleryCard);
 
 const galleryList = document.getElementById('gallery-list');
 
-function galleryCreateCard({ name, occurrences, timestamp, blob }) {
+function galleryCreateCard({ name, timestamp, blob }) {
     const el = document.createElement('gallery-card');
 
     el.setAttribute('name', name);
-    el.setAttribute('occurrences', occurrences);
+    el.setAttribute('timestamp', timestamp);
     el.setAttribute('imageSrc', URL.createObjectURL(blob));
     galleryList.appendChild(el);
 }

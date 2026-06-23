@@ -1,37 +1,39 @@
-let totalOccurrences = 0;
-let monsieursList = [];
+const allMonsieurs = {
+    common: [],
+    rare: [],
+    legendary: [],
+    custom: [],
+}
 
-async function cliqueInit(gameMode) {
-    totalOccurrences = 0;
-    monsieursList = [];
+defaultMonsieursList.forEach(monsieur => {
+    allMonsieurs[monsieur.rarity].push(monsieur);
+});
 
-    if (gameMode === 'default' || gameMode === 'both') {
-        defaultMonsieursList.forEach(({file, occurrences}) => {
-            monsieursList.push({
-                file,
-                occurrences,
-                min: totalOccurrences,
-                max: totalOccurrences + occurrences
-            })
-            totalOccurrences += occurrences;
-        });
+const P_COMMON = 0.88;
+const P_RARE = 0.10;
+const P_LEGENDARY = 0.02;
+const P_CUSTOM = 0.3;
+
+const ALL_ODDS = {
+    default: {
+        common: P_COMMON,
+        rare: P_RARE,
+        legendary: P_LEGENDARY,
+        custom: 0
+    },
+    custom: {
+        common: 0,
+        rare: 0,
+        legendary: 0,
+        custom: 1
+    },
+    both: {
+        common: P_COMMON * (1 - P_CUSTOM),
+        rare: P_RARE * (1 - P_CUSTOM),
+        legendary: P_LEGENDARY * (1 - P_CUSTOM),
+        custom: P_CUSTOM
     }
-
-    if (gameMode === 'custom' || gameMode === 'both') {
-        const monsieurs = await storageGetAllMonsieurs();
-        monsieurs.forEach(({name, occurrences, blob}) => {
-            occurrences = Number(occurrences);
-            monsieursList.push({
-                name,
-                file: URL.createObjectURL(blob),
-                occurrences,
-                min: totalOccurrences,
-                max: totalOccurrences + occurrences
-            })
-            totalOccurrences += occurrences;
-        });
-    }
-} 
+}
 
 const gameModeSelector = document.getElementById('game-mode-selector');
 const gameModeSetting = new StorageObject('gameMode', 'default');
@@ -40,7 +42,6 @@ gameModeSelector.value = gameModeSetting.value;
 gameModeSelector.oninput = () => {
     gameModeSetting.value = gameModeSelector.value;
 }
-gameModeSetting.subscribe(cliqueInit);
 
 function cliqueTitle() {
     document.getElementById('clique-page').removeEventListener('click', cliqueTitle);
@@ -51,8 +52,6 @@ function cliqueTitle() {
 
 document.getElementById('clique-page').addEventListener('click', cliqueTitle);
 
-let lastRange;
-
 const monsieursCount = new StorageObject('monsieursCount', 0);
 
 function cliqueMonsieur() {
@@ -61,17 +60,14 @@ function cliqueMonsieur() {
 
     shake();
 
-    do {
-        magicNumber = Math.random() * totalOccurrences;
-    } while (lastRange && magicNumber >= lastRange.min && magicNumber < lastRange.max)
+    let monsieur = getNextMonsieur();
 
-    monsieursList.forEach(monsieur => {
-        if (magicNumber >= monsieur.min && magicNumber < monsieur.max) {
-            lastRange = { min: monsieur.min, max: monsieur.max };
-            document.getElementById('monsieur').src = monsieur.file;
-            changeFavicon(monsieur.file);
-        }
-    });
+    if (monsieur.isCustom) {
+        monsieur.file = URL.createObjectURL(monsieur.blob);
+    }
+
+    document.getElementById('monsieur').src = monsieur.file;
+    changeFavicon(monsieur.file);
 }
 
 let shaking = false;
@@ -86,6 +82,36 @@ function shake() {
         document.body.classList.remove("shake");
         shaking = false;
     }, 200);
+}
+
+let lastMonsieur;
+
+function getNextMonsieur() {
+    let magicNumber = Math.random(); // between 0 and 1
+    let monsieur;
+    let index;
+
+    const odds = ALL_ODDS[gameModeSetting.value];
+    for (const rarity in odds) {
+        if (odds[rarity] < magicNumber) {
+            magicNumber -= odds[rarity];
+            continue;
+        } else {
+            const list = allMonsieurs[rarity];
+            index = Math.floor(magicNumber / odds[rarity] * list.length);
+            monsieur = list[index];
+            break;
+        }
+    }
+
+    // Make sure same monsieur does not come up twice
+    if (lastMonsieur) {
+        allMonsieurs[lastMonsieur.rarity].push(lastMonsieur);
+    }
+    lastMonsieur = monsieur;
+    allMonsieurs[monsieur.rarity].splice(index, 1);
+
+    return monsieur;
 }
 
 function changeFavicon(src) {
@@ -114,4 +140,13 @@ function navigate(page) {
     currentPage = page;
 }
 
-cliqueInit(gameModeSetting.value);
+async function cliqueInit() {
+    if (allMonsieurs.custom.length === 0) {
+        allMonsieurs.custom = await storageGetAllMonsieurs();
+        allMonsieurs.custom.forEach((monsieur, index) => {
+            allMonsieurs.custom[index] = { ...monsieur, rarity: 'custom', isCustom: true };
+        });
+    }
+} 
+
+cliqueInit();

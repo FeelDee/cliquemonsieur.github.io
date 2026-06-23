@@ -1,30 +1,37 @@
 const defaultMonsieursList = [
     {
+        name: 'baboune',
         file: 'monsieurs/baboune.png',
-        occurrences: 10,
+        rarity: 'common',
     },
     {
+        name: 'bobby',
         file: 'monsieurs/bobby.png',
-        occurrences: 1,
+        rarity: 'legendary',
     },
     {
+        name: 'felix',
         file: 'monsieurs/felix.png',
-        occurrences: 10,
+        rarity: 'rare',
     },
     {
+        name: 'hagrid',
         file: 'monsieurs/hagrid.png',
-        occurrences: 10,
+        rarity: 'common',
     },
     {
+        name: 'patate',
         file: 'monsieurs/patate.png',
-        occurrences: 10,
+        rarity: 'rare',
     },
     {
+        name: 'robert',
         file: 'monsieurs/robert.png',
-        occurrences: 10,
+        rarity: 'common',
     },
     {
+        name: 'vampire',
         file: 'monsieurs/vampire.png',
-        occurrences: 10,
+        rarity: 'common',
     }
 ];

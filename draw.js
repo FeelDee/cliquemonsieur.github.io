@@ -117,7 +117,6 @@ saveDialog.addEventListener('close', () => {
     const data = Object.fromEntries(formdata);
     storageSaveMonsieur({
         name: data.name,
-        occurrences: Number(data.occurrences),
         timestamp: Date.now(),
         blob: previousCaptures[previousCaptures.length - 1]
     });
@@ -127,11 +126,10 @@ saveDialog.addEventListener('close', () => {
  * @brief For external use. Load saved image from blob onto canvas.
  * @param blob 200x200 image to load to canvas 
  */
-async function canvasLoadMonsieur({name, occurrences, blob}) {
+async function canvasLoadMonsieur({name, blob}) {
     await drawCanvasFromBlob(blob);
     canvasInit();
     saveDialog.querySelector('#save-dialog-name-input').value = name;
-    saveDialog.querySelector('#save-dialog-occurrences-input').value = occurrences;
 }
 
 /* PEN TOOL FUNCTIONS */
