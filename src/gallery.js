@@ -1,3 +1,8 @@
+const publishDialog = document.getElementById('publish-dialog');
+const publishDialogImg = document.getElementById('publish-dialog-img');
+const publishDialogNameInput = document.getElementById('publish-dialog-name-input');
+const publishForm = publishDialog.querySelector('form');
+
 class GalleryCard extends HTMLElement {
     connectedCallback() {
         let template = document.getElementById('gallery-card-template');
@@ -5,7 +10,8 @@ class GalleryCard extends HTMLElement {
         this.appendChild(document.importNode(templateContent, true));
 
         const img = this.querySelector('#gallery-card-image');
-        img.src = this.getAttribute('imageSrc');
+        this.imgSrc = this.getAttribute('imageSrc');
+        img.src = this.imgSrc;
 
         const name = this.querySelector('#gallery-card-name');
         this.name = this.getAttribute('name');
@@ -20,6 +26,9 @@ class GalleryCard extends HTMLElement {
             await canvasLoadMonsieur(monsieur);
             navigate('dessine');
         }
+
+        const publishButton = this.querySelector('#gallery-card-publish');
+        publishButton.onclick = this.openPublishDialog.bind(this);
 
         const deleteButton = this.querySelector('#gallery-card-delete');
         deleteButton.onclick = this.confirmDeletion.bind(this);
@@ -41,6 +50,34 @@ class GalleryCard extends HTMLElement {
         p.innerHTML = `Supprimer ${this.name}?`;
 
         confirmDialog.showModal();
+    }
+
+    openPublishDialog() {
+        publishDialogImg.src = this.getAttribute('imageSrc');
+        publishDialogNameInput.value = this.name;
+
+        publishDialog.addEventListener('close', async () => {
+            if (publishDialog.returnValue !== 'submit') return;
+
+            const formdata = new FormData(publishForm).entries();
+            const data = Object.fromEntries(formdata);
+
+            const url = new URL('https://clique-monsieur-one.pducas1.workers.dev/');
+            url.pathname = `${data.name}-${data.author}`;
+            const response = await fetch(url, {
+                method: "PUT",
+                body: await fetch(this.imgSrc).then(r => r.blob())
+            });
+
+            if (!response.ok) {
+                throw new Error(`Upload failed: ${response.status}`);
+            }
+
+            snackBarMessage(`${this.name} a été soumis avec succès! Merci <3`)
+
+        }, { once: true });
+
+        publishDialog.showModal();
     }
 }
 

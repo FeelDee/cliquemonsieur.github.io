@@ -32,3 +32,26 @@ function navigate(page) {
 
     currentPage = page;
 }
+
+let snackBarTimeout = null;
+
+/**
+ * Displays a tempoary message at the bottom of the page
+ * @param {string} message  Message to be displayed in the snack bar
+ * @param {number} duration (optional) How long the message will be shown, defaults to 5s
+ */
+function snackBarMessage(message, timeout) {
+    const snackBar = document.getElementById('snack-bar');
+    snackBar.innerHTML = message;
+
+    if (snackBarTimeout) {
+        clearTimeout(snackBarTimeout);
+    } else {
+        snackBar.classList.remove('hidden');
+    }
+
+    snackBarTimeout = setTimeout(() => {
+        snackBar.classList.add('hidden');
+        snackBarTimeout = null;
+    }, timeout || 5000);
+}

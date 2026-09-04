@@ -58,6 +58,18 @@ img {
 
 /* ELEMENTS FIXES */
 
+#snack-bar {
+    position: fixed;
+    bottom: 10vh;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background-color: darkgreen;
+    border-radius: 3px;
+    border-color: #f4f4f4;
+    border-style: solid;
+    padding: 10px;
+}
+
 #menu {
     position: fixed;
     top: 10vh;

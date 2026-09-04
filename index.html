@@ -74,6 +74,25 @@
                 <button value="cancel">Noooooon!</button>
             </form>
         </dialog>
+        <dialog id="publish-dialog">
+            <p>Publie ton monsieur</p>
+            <p>Soumets ton monsieur pour qu'il puisse un jour être partagé au monde entier!</p>
+            <img id="publish-dialog-img">
+            <form method="dialog">
+                    <label>
+                        Nom du monsieur :
+                        <input id="publish-dialog-name-input" name="name" value="mon magnifique monsieur">
+                    </label>
+                    <br>
+                    <label>
+                        Ton nom :
+                        <input id="save-dialog-author-input" name="author" value="">
+                    </label>
+                </p>
+                <button value="submit">Publier</button>
+                <button value="cancel">Annuler</button>
+            </form>
+        </dialog>
     </div>
     <div id="settings-page" class="page hidden">
         <p>
@@ -85,6 +104,7 @@
             </select>
         </p>
     </div>
+    <div id="snack-bar" class="hidden"></div>
     <div id="menu">
         <button id="clique-nav" class="icon-button active" onclick="navigate('clique')"><img src="assets/cursor_24p.png"></button>
         <button id="dessine-nav" class="icon-button" onclick="navigate('dessine')"><img src="assets/pencil.png" ></button>
@@ -106,6 +126,7 @@
             <a id="gallery-card-download">
                 <button class="icon-button"><img src="assets/download.png"></button>
             </a>
+            <button id="gallery-card-publish" class="icon-button"><img src="assets/earth.png"></button>
             <button id="gallery-card-delete" class="icon-button"><img src="assets/dustbin.png"></button>
         </div>
     </div>
